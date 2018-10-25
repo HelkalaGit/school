@@ -1,0 +1,152 @@
+package Demo6;
+
+/**
+ * @author Joel
+ * @version Oct 9, 2018
+ * Esittää hissin toimintoa
+ */
+public class Hissi {
+
+    Boolean huoltotila = false;
+    Boolean auki = false;
+    int kerros = 1;
+    String koodi = "123";
+    String nimi = "";
+    static Huoltomies Hmies; 
+    private static int seuraavaNro   = 1;
+    
+    
+    /**
+     * Kutsutaan hissiä 
+     * @param i missä kutsutaan
+     */
+    private void kutsu(int i) {
+        if(huoltotila){
+            System.out.println("" + this.getNimi() +" on epäkunnossa!");
+            return;
+        }
+        //int missa = getKerros();
+        if(kerros == i) {
+            auki = true;
+            return;
+        }
+        //setKerros(i);
+        kerros = i;
+    }
+    
+    /**
+     * Laitetaan hissi liikkeelle
+     * @param i mihin mennään
+     */
+    private void meno(int i) {
+        if(huoltotila){
+            System.out.println(""+ this.getNimi() + " on epäkunnossa!");
+            return;
+        }
+        auki = false;
+        setKerros(i);
+    }
+    
+    /**
+     * Asetetaan hissi huoltotilaan ja kutsutaan sille huoltaja
+     */
+    private void huoltoon(){
+        huoltotila = true;
+        Huoltomies.tilaaHuolto(this);
+    }
+    
+    /**
+     * Asetetaan hissille kerros
+     * @param i asetettava kerros
+     */
+    private void setKerros(int i) {
+        if(auki == true) {
+            auki = false;
+        }
+        kerros = i;
+        auki = true;
+    }
+    
+    /**
+     * Metodi jossa korjataan hissi huoltomiehellä
+     * @param mies Huoltomies joka tulee korjaamaan
+     */
+    public void aukiHuolto(Huoltomies mies) {
+        if(this.koodi.contains(mies.getKoodi())){
+            Hmies = mies;
+            auki = true;
+            System.out.println("" + this.getNimi() + " huolto käynnissä");
+            mies.aantele();
+            return;
+        }System.out.println("Väärä koodi - Pääsy kielletty");
+    }
+    
+    /**
+     * @return palautetaan hissin nimi eli numero
+     */
+    private String getNimi() {
+        return this.nimi;
+    }
+    
+    /**
+     * Saadaan hissin huoltovalmiiksi
+     * @param mies huoltomies
+     */
+    public void huoltoValmis(Huoltomies mies) {
+        if(mies == null){
+            System.out.println(""+ this.getNimi() + " huolto kesken, "
+                    + " tilaa huoltomies.");
+            return;
+        }
+        huoltotila = false;
+        mies.naytaHauis();
+        Hmies = null;
+        mies.toihin();
+        System.out.println("" + this.getNimi() + " huolto valmis.");
+        auki = false;
+    }
+
+    /**
+     * Annetaan hissille numero
+     */
+    public void alusta() {
+        this.nimi = "Hissi" + seuraavaNro;
+        seuraavaNro++;
+    }
+    
+    /**
+     * @param args ei käytössä
+     */
+    public static void main(String[] args) {
+
+        Hissi hissi1 = new Hissi();
+        Hissi hissi2 = new Hissi();
+        
+        Huoltomies h1 = new Huoltomies();
+        h1.rekisteroi("Seppo", "123");
+        h1.toihin();
+        hissi1.alusta();
+        hissi2.alusta();
+        
+        hissi1.kutsu(1);
+        hissi2.kutsu(2);
+        
+        hissi1.meno(3);
+        hissi2.meno(4);
+        
+        hissi1.huoltoon();
+        hissi2.huoltoon();
+        
+        hissi1.meno(4);
+        hissi2.meno(3);
+        
+        hissi1.huoltoValmis(Hmies);
+        hissi2.huoltoValmis(Hmies);
+        
+        hissi1.kutsu(3);
+        hissi2.kutsu(5);
+        
+        hissi2.huoltoon();
+        hissi2.huoltoValmis(Hmies);
+    }
+}
